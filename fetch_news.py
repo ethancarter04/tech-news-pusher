@@ -132,24 +132,53 @@ def send_to_serverchan(title, content):
         print(f"Server酱推送失败: {e}")
 
 # ================= [新增部分：钉钉推送函数] =================
+# def send_to_dingtalk(title, content):
+#     if not DINGTALK_WEBHOOK:
+#         print("未配置 DINGTALK_WEBHOOK，跳过钉钉推送")
+#         return
+    
+#     # 钉钉机器人要求的特定 JSON 格式
+#     data = {
+#         "msgtype": "markdown",
+#         "markdown": {
+#             "title": title,
+#             "text": f"# {title}\n\n{content}"
+#         }
+#     }
+#     try:
+#         requests.post(DINGTALK_WEBHOOK, json=data, timeout=10)
+#         print("钉钉群组推送成功")
+#     except Exception as e:
+#         print(f"钉钉推送失败: {e}")
+
+# ================= [修改部分：钉钉推送函数，加入关键词和请求头] =================
 def send_to_dingtalk(title, content):
     if not DINGTALK_WEBHOOK:
         print("未配置 DINGTALK_WEBHOOK，跳过钉钉推送")
         return
     
-    # 钉钉机器人要求的特定 JSON 格式
+    # 你的钉钉机器人安全设置关键词
+    KEYWORD = "新闻"
+    
+    # 构造消息体，确保标题和正文中都包含关键词
     data = {
         "msgtype": "markdown",
         "markdown": {
-            "title": title,
-            "text": f"# {title}\n\n{content}"
+            "title": f"【{KEYWORD}】{title}",
+            "text": f"# 【{KEYWORD}】{title}\n\n{content}\n\n---\n*{KEYWORD}机器人自动发送*"
         }
     }
+    
+    # 明确指定发送 JSON 格式的数据
+    headers = {'Content-Type': 'application/json'}
+    
     try:
-        requests.post(DINGTALK_WEBHOOK, json=data, timeout=10)
-        print("钉钉群组推送成功")
+        # 加上 headers，并打印 resp.text 方便我们在 Actions 日志里看报错详情
+        resp = requests.post(DINGTALK_WEBHOOK, json=data, headers=headers, timeout=10)
+        print(f"钉钉群组推送结果: {resp.text}")
     except Exception as e:
         print(f"钉钉推送失败: {e}")
+# ===========================================================
 # ===========================================================
 
 if __name__ == "__main__":
