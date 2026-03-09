@@ -27,5 +27,6 @@ jobs:
     - name: 运行爬虫和推送脚本
       env:
         SERVER_CHAN_SENDKEY: ${{ secrets.SERVER_CHAN_SENDKEY }}
+        DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }} #  新增dingtalk一行        
       run: |
         python fetch_news.py
